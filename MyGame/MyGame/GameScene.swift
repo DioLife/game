@@ -25,6 +25,18 @@ class GameScene: SKScene {
     
     var gameStatus: GameStatus = .idle  //表示当前游戏状态的变量，初始值为初始化状态
     
+    //设置三个常量来表示小鸟、水管和地面物理体
+    let birdCategory: UInt32 = 0x1 << 0
+    let pipeCategory: UInt32 = 0x1 << 1
+    let floorCategory: UInt32 = 0x1 << 2
+    
+    //但是这个游戏结束有点突兀，最好能给个提示告诉玩家游戏结束了。
+    lazy var gameOverLabel: SKLabelNode = {
+        let label = SKLabelNode(fontNamed: "Chalkduster")
+        label.text = "Game Over"
+        return label
+    }()
+    
     
     //didMove()方法会在当前场景被显示到一个view上的时候调用，你可以在里面做一些初始化的工作
     override func didMove(to view: SKView) {
@@ -50,6 +62,31 @@ class GameScene: SKScene {
         
         //首先在场景初始化完成的时候，肯定要先调用一下shuffle()初始化
         shuffle()
+        
+        //配置场景的物理体 Set Scene physics
+        self.physicsBody = SKPhysicsBody(edgeLoopFrom: self.frame)//给场景添加一个物理体，这个物理体就是一条沿着场景四周的边，限制了游戏范围，其他物理体就不会跑出这个场景
+        print(self.physicsWorld.gravity)//打印一下当前物理世界的重力加速度
+        self.physicsWorld.contactDelegate = self //物理世界的碰撞检测代理为场景自己，这样如果这个物理世界里面有两个可以碰撞接触的物理体碰到一起了就会通知他的代理 (SKPhysicsContactDelegate)
+        
+        
+        /*
+         categoryBitMask，这个用来表示当前物理体是哪一个物理体，我们用我们刚刚准备好的floorCategory来表示他，等会碰撞检测的时候需要通过这个来判断。categoryBitMask 这个用来表示当前物理体是哪一个物理体
+        **/
+        //配置地面1的物理体
+        floor1.physicsBody = SKPhysicsBody(edgeLoopFrom: CGRect(x: 0, y: 0, width: floor1.size.width, height: floor1.size.height))
+        floor1.physicsBody?.categoryBitMask = floorCategory
+        //配置地面2的物理体
+        floor2.physicsBody = SKPhysicsBody(edgeLoopFrom: CGRect(x: 0, y: 0, width: floor2.size.width, height: floor2.size.height))
+        floor2.physicsBody?.categoryBitMask = floorCategory
+        
+        /*
+         contactTestBitMask是来设置可以与小鸟碰撞检测的物理体，我们设置了地面和水管，所以通常物理体的categoryBitMask用二进制移位方式来表示，这样在设置contactTestBitMask的时候就可以直接多个移位的标识做按位取或的运算即可
+         **/
+        //配置小鸟物理体
+        bird.physicsBody = SKPhysicsBody(texture: bird.texture!, size: bird.size)
+        bird.physicsBody?.allowsRotation = false    //禁止旋转
+        bird.physicsBody?.categoryBitMask = birdCategory //设置小鸟物理体标示
+        bird.physicsBody?.contactTestBitMask = floorCategory | pipeCategory //设置可以小鸟碰撞检测的物理体
     }
 
     //update()方法为SKScene自带的系统方法，在画面每一帧刷新的时候就会调用一次
@@ -67,11 +104,21 @@ class GameScene: SKScene {
         gameStatus = .idle
         removeAllPipesNode()
         bird.position = CGPoint(x: self.size.width * 0.5, y: self.size.height * 0.5)
+        /*
+         isDynamic的作用是设置这个物理体当前是否会受到物理环境的影响，默认是true，我们在游戏初始化的时候设置小鸟不受物理环境影响，但是在游戏开始的时候才会受到物理环境的影响
+         **/
+        bird.physicsBody?.isDynamic = false//防止游戏一开始在初始化状态小鸟就受到重力的影响而掉到地面上了
         birdStartFly()
+        
+        /*
+         不过要记住在游戏回到初始化状态下的时候，要把gameOverLabel从场景里移除掉，所以找到shuffle()方法，然后在removeAllPipesNode()方法后面加上下面这一句
+         **/
+        gameOverLabel.removeFromParent()
     }
     func startGame()  {
         //游戏开始处理方法
         gameStatus = .running
+        bird.physicsBody?.isDynamic = true //小岛开始受到重力作用
         startCreateRandomPipesAction()  //开始循环创建随机水管
     }
     func gameOver()  {
@@ -79,6 +126,21 @@ class GameScene: SKScene {
         gameStatus = .over
         birdStopFly()
         stopCreateRandomPipesAction()
+        
+        /*
+         接下来找到gameOver()方法，在此方法的最后加上下面的代码，这样在gameOver的时候就会有一个提示语从天而降了
+         **/
+        //禁止用户点击屏幕
+        isUserInteractionEnabled = false
+        //添加gameOverLabel到场景里
+        addChild(gameOverLabel)
+        //设置gameOverLabel其实位置在屏幕顶部
+        gameOverLabel.position = CGPoint(x: self.size.width * 0.5, y: self.size.height)
+        //让gameOverLabel通过一个动画action移动到屏幕中间
+        gameOverLabel.run(SKAction.move(by: CGVector(dx:0, dy:-self.size.height * 0.5), duration: 0.5), completion: {
+            //动画结束才重新允许用户点击屏幕
+            self.isUserInteractionEnabled = true
+        })
     }
     
     
@@ -90,6 +152,11 @@ class GameScene: SKScene {
         case .idle:
             startGame()//如果在初始化状态下，玩家点击屏幕则开始游戏
         case .running:
+            /*
+             这个句代码可以给小鸟的物理体施加一个向上的冲量，让小鸟获得一定的向上速度，但是由于小鸟还受重力影响，所以你得经常点击屏幕才能保持小鸟不掉下去。
+             applyImpulse是什么？IapplyImpulse在物理上就是冲量的意思，冲量=质量 * (结束速度 - 初始速度)，即I = m * (v2 - v1)，如果物体的质量为1，那么冲量i = v2 - v1。当一个质量为1的物理体applyImpulse(CGVector(dx: 0, dy: 20))的意思就是让他在y的方向上叠加20m/s的速度。当然如果物理体质量m不为1，那叠加的速度就不是刚好等于冲量的字面量了，而是要除以m了。如一个质量为2的物理体同样applyImpulse(CGVector(dx: 0, dy: 20))，结果就是它在y的方向上叠加了10m/s的一个速度
+             **/
+            bird.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 20))
             print("给小鸟一个向上的力")//如果在游戏进行中状态下，玩家点击屏幕则给小鸟一个向上的力(暂时用print一句话代替)
         case .over:
             shuffle() //如果在游戏结束状态下，玩家点击屏幕则进入初始化状态
@@ -159,6 +226,17 @@ class GameScene: SKScene {
         bottomPipe.name = "pipe"
         bottomPipe.position = CGPoint(x: self.size.width + bottomPipe.size.width * 0.5, y: self.floor1.size.height + bottomPipe.size.height * 0.5)  //设置下水管的垂直位置为底部贴着地面的顶部，水平位置在屏幕右侧之外
         
+        
+        //配置上水管物理体
+        topPipe.physicsBody = SKPhysicsBody(texture: topTexture, size: topSize)
+        topPipe.physicsBody?.isDynamic = false
+        topPipe.physicsBody?.categoryBitMask = pipeCategory
+        //配置下水管物理体
+        bottomPipe.physicsBody = SKPhysicsBody(texture: bottomTexture, size: bottomSize)
+        bottomPipe.physicsBody?.isDynamic = false
+        bottomPipe.physicsBody?.categoryBitMask = pipeCategory
+
+        
         //将上下水管添加到场景里
         addChild(topPipe)
         addChild(bottomPipe)
@@ -205,4 +283,31 @@ class GameScene: SKScene {
         }
     }
     
+}
+
+extension GameScene:SKPhysicsContactDelegate{
+    
+    //检测碰撞
+    /*
+     在GameScene里添加下面这个方法代码，didBegin()会在当前物理世界有两个物理体碰撞接触了则回调用，这两个碰撞了的物理体的信息都在contact这个参数里面，分别是bodyA和bodyB
+     **/
+    func didBegin(_ contact: SKPhysicsContact) {
+        //先检查游戏状态是否在运行中，如果不在运行中则不做操作，直接return
+        if gameStatus != .running { return }
+        //为了方便我们判断碰撞的bodyA和bodyB的categoryBitMask哪个小，小的则将它保存到新建的变量bodyA里的，大的则保存到新建变量bodyB里
+        var bodyA : SKPhysicsBody
+        var bodyB : SKPhysicsBody
+        if contact.bodyA.categoryBitMask < contact.bodyB.categoryBitMask {
+            bodyA = contact.bodyA
+            bodyB = contact.bodyB
+        }else {
+            bodyA = contact.bodyB
+            bodyB = contact.bodyA
+        }
+        //接下来判断bodyA是否为小鸟，bodyB是否为水管或者地面，如果是则游戏结束，直接调用gameOver()方法
+        if (bodyA.categoryBitMask == birdCategory && bodyB.categoryBitMask == pipeCategory) ||
+            (bodyA.categoryBitMask == birdCategory && bodyB.categoryBitMask == floorCategory) {
+            gameOver()
+        }
+    }
 }
