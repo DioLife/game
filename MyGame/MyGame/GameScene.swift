@@ -7,6 +7,9 @@
 //
 
 //https://www.jianshu.com/p/304e84a12b91
+/*
+ PS:这里稍微多介绍一点SKLabelNode这个类，如果做过iOS应用开发的朋友应该都知道UILabel这个控件，跟UILabel类似SKLabelNode就是SpriteKit中显示一段文字的空间，首先他是继承自SKNode，所以它可以被添加到场景里面，它也可以执行各种Action动作。另外可能还有一个你不适应的地方就是他的位置布局问题，在做iOS应用时候UILabel有大小，UILabel的原点在它自己左上角，你自然知道怎么放置它了。但是SKLabelNode是没有size这个属性的，他的frame属性也只是readonly的，这怎么办？SKLabelNode有两个新的属性叫做verticalAlignmentMode和horizontalAlignmentMode，表示这个label在水平和垂直方向上如何布局，他们是枚举类型。比如你把的SKLabelNode的postion位置设置在(50,100)这个点，然后把他的verticalAlignmentMode 设置为.top，则表示这段文字的顶部是position所在位置的y的水平高度上，如果设置为.bottom，则这段文字的底部水平线高度就是position的y的水平高度。所以
+ **/
 import SpriteKit
 
 enum GameStatus {
@@ -37,6 +40,20 @@ class GameScene: SKScene {
         return label
     }()
     
+    //用来展示用户走了多远的距离
+    lazy var metersLabel: SKLabelNode = {
+        let label = SKLabelNode(text: "meters:0")
+        label.verticalAlignmentMode = .top
+        label.horizontalAlignmentMode = .right
+        return label
+    }()
+    
+    //记录飞行米数的变量
+    var meters = 0 {
+        didSet  {
+            metersLabel.text = "meters:\(meters)"
+        }
+    }
     
     //didMove()方法会在当前场景被显示到一个view上的时候调用，你可以在里面做一些初始化的工作
     override func didMove(to view: SKView) {
@@ -87,6 +104,12 @@ class GameScene: SKScene {
         bird.physicsBody?.allowsRotation = false    //禁止旋转
         bird.physicsBody?.categoryBitMask = birdCategory //设置小鸟物理体标示
         bird.physicsBody?.contactTestBitMask = floorCategory | pipeCategory //设置可以小鸟碰撞检测的物理体
+        
+        
+        // Set Meter Label
+        metersLabel.position = CGPoint(x: self.size.width * 0.5, y: self.size.height)
+        metersLabel.zPosition = 100
+        addChild(metersLabel)
     }
 
     //update()方法为SKScene自带的系统方法，在画面每一帧刷新的时候就会调用一次
@@ -94,6 +117,9 @@ class GameScene: SKScene {
         // Called before each frame is rendered
         if gameStatus != .over {
             moveScene()
+        }
+        if gameStatus == .running {
+            meters += 1//累加飞行距离
         }
     }
     
@@ -114,6 +140,8 @@ class GameScene: SKScene {
          不过要记住在游戏回到初始化状态下的时候，要把gameOverLabel从场景里移除掉，所以找到shuffle()方法，然后在removeAllPipesNode()方法后面加上下面这一句
          **/
         gameOverLabel.removeFromParent()
+        
+        meters = 0//重置飞行距离
     }
     func startGame()  {
         //游戏开始处理方法
