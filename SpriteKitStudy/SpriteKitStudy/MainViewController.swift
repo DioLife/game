@@ -11,15 +11,39 @@ import SpriteKit
 
 class MainViewController: UIViewController {
     
-    /*
-     SpriteKit内容由SKView类呈现。 SKView对象呈现的内容称为场景，即SKScene对象。场景参与响应者链responder chain，并具有其他功能，使其适合游戏。
-     **/
     var skView:SKView?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.skView = SKView.init(frame: CGRect.init(x: 10, y: 10, width: ScreenWIDTH, height: <#T##CGFloat#>))
-        
+        self.view = SKView()
+        self.skView = self.view as? SKView
+        if self.skView != nil {
+            let scene = GameScene.init(size: CGSize.init(width: ScreenWIDTH - 20, height: ScreenHEIGHT - 100))
+            
+            scene.scaleMode = .aspectFill
+            
+            self.skView!.presentScene(scene)
+            
+            self.skView!.ignoresSiblingOrder = true
+            
+            self.skView!.showsFPS = true
+            self.skView!.showsNodeCount = true
+        }
     }
 
+    override var shouldAutorotate: Bool {
+        return true
+    }
+    
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            return .allButUpsideDown
+        } else {
+            return .all
+        }
+    }
+    
+    override var prefersStatusBarHidden: Bool {
+        return true
+    }
 }

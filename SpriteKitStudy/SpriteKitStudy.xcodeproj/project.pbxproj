@@ -12,6 +12,7 @@
 		CE389CD7223BB3D00099BD35 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CE389CD5223BB3D00099BD35 /* LaunchScreen.storyboard */; };
 		CE389CDF223BB3FD0099BD35 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE389CDE223BB3FD0099BD35 /* MainViewController.swift */; };
 		CE389CE2223BC3690099BD35 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE389CE1223BC3690099BD35 /* Common.swift */; };
+		CE389D02223E57920099BD35 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE389D01223E57920099BD35 /* GameScene.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +23,7 @@
 		CE389CD8223BB3D00099BD35 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CE389CDE223BB3FD0099BD35 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		CE389CE1223BC3690099BD35 /* Common.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
+		CE389D01223E57920099BD35 /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,6 +59,7 @@
 				CE389CE0223BC3580099BD35 /* utils */,
 				CE389CCC223BB3CF0099BD35 /* AppDelegate.swift */,
 				CE389CDE223BB3FD0099BD35 /* MainViewController.swift */,
+				CE389D01223E57920099BD35 /* GameScene.swift */,
 				CE389CD3223BB3D00099BD35 /* Assets.xcassets */,
 				CE389CD5223BB3D00099BD35 /* LaunchScreen.storyboard */,
 				CE389CD8223BB3D00099BD35 /* Info.plist */,
@@ -144,6 +147,7 @@
 			files = (
 				CE389CCD223BB3CF0099BD35 /* AppDelegate.swift in Sources */,
 				CE389CE2223BC3690099BD35 /* Common.swift in Sources */,
+				CE389D02223E57920099BD35 /* GameScene.swift in Sources */,
 				CE389CDF223BB3FD0099BD35 /* MainViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -213,7 +217,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -268,7 +272,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -285,6 +289,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = V64L9N2K5F;
 				INFOPLIST_FILE = SpriteKitStudy/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -303,6 +308,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = V64L9N2K5F;
 				INFOPLIST_FILE = SpriteKitStudy/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
