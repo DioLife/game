@@ -82,6 +82,7 @@ class GameScene: SKScene {
         
         //配置场景的物理体 Set Scene physics
         self.physicsBody = SKPhysicsBody(edgeLoopFrom: self.frame)//给场景添加一个物理体，这个物理体就是一条沿着场景四周的边，限制了游戏范围，其他物理体就不会跑出这个场景
+        self.physicsWorld.gravity = CGVector(dx: 0.0, dy: -2.9)
         print(self.physicsWorld.gravity)//打印一下当前物理世界的重力加速度
         self.physicsWorld.contactDelegate = self //物理世界的碰撞检测代理为场景自己，这样如果这个物理世界里面有两个可以碰撞接触的物理体碰到一起了就会通知他的代理 (SKPhysicsContactDelegate)
         
