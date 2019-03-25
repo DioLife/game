@@ -18,7 +18,7 @@ class SKNodeViewController: UIViewController {
         self.view = SKView()
         self.skView = self.view as? SKView
         if self.skView != nil {
-            let scene = GameScene1.init(size: CGSize.init(width: ScreenWIDTH - 20, height: ScreenHEIGHT - 100))
+            let scene = GameScene1.init(size: CGSize.init(width: ScreenWIDTH, height: ScreenHEIGHT))
             
             scene.scaleMode = .aspectFill
             
