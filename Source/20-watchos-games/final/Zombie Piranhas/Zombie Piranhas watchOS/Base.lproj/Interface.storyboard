@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="11201" systemVersion="16A320" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="AgC-eL-Hgc">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="11077"/>
+    </dependencies>
+    <scenes>
+        <!--Interface Controller-->
+        <scene sceneID="aou-V4-d1y">
+            <objects>
+                <controller id="AgC-eL-Hgc" customClass="InterfaceController" customModule="Zombie_Piranhas_watchOS" customModuleProvider="target">
+                    <items>
+                        <spriteKitScene alignment="left" id="ARY-87-yzO">
+                            <gestureRecognizers>
+                                <tapGestureRecognizer id="ASH-Z8-fQ2">
+                                    <connections>
+                                        <action selector="didTap:" destination="AgC-eL-Hgc" id="Lxg-dX-u1g"/>
+                                    </connections>
+                                </tapGestureRecognizer>
+                                <swipeGestureRecognizer direction="4" id="lDb-oc-9ZN">
+                                    <connections>
+                                        <action selector="didSwipe:" destination="AgC-eL-Hgc" id="NiA-M2-lsZ"/>
+                                    </connections>
+                                </swipeGestureRecognizer>
+                            </gestureRecognizers>
+                        </spriteKitScene>
+                    </items>
+                    <connections>
+                        <outlet property="skInterface" destination="ARY-87-yzO" id="U6w-Od-uXj"/>
+                    </connections>
+                </controller>
+            </objects>
+        </scene>
+    </scenes>
+</document>
