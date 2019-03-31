@@ -49,13 +49,6 @@
 			path = main;
 			sourceTree = "<group>";
 		};
-		5F392D88224532FD0048598D /* resource */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = resource;
-			sourceTree = "<group>";
-		};
 		5F392D89224534CC0048598D /* SKSpriteNode */ = {
 			isa = PBXGroup;
 			children = (
@@ -85,7 +78,6 @@
 			children = (
 				5F392D89224534CC0048598D /* SKSpriteNode */,
 				5F392D87224532E20048598D /* main */,
-				5F392D88224532FD0048598D /* resource */,
 				CE389CE0223BC3580099BD35 /* utils */,
 				CE389CD3223BB3D00099BD35 /* Assets.xcassets */,
 				CE389CD5223BB3D00099BD35 /* LaunchScreen.storyboard */,
